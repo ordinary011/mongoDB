@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+
+
+C:\Program Files\MongoDB\Server\4.0\bin
+
+db.application.find({
+    "sum" : {
+        $gt : 5500
+    }, "name" : 'zuz'
+}).pretty();
+
+
+db.application.find({
+    $or : [
+        {name : 'jordan'},
+        {name : 'easy'}
+    ]
+}, {
+    name: true,
+    sum: true,
+    _id : false
+}).pretty();
+
+
+
+db.clients.find({
+    $or : [
+        {name : 'jordan'},
+        {name : 'easy'}
+    ]
+}, {
+    name: true,
+    sum: true,
+    _id : false
+}).pretty();
+
+
+
+db.application.find({
+    $or : [
+        {name : 'jordan'},
+        {name : 'easy'}
+    ]
+}, {_id : false}).sort({sum : 1}).skip(1)
+
+
+
+
+db.application.find({
+    $or : [
+        {name : 'jordan'},
+        {name : 'easy'}
+    ]
+}, {_id : false}).sort({sum : 1}).skip(1).limit(1)
+
+
+
+
+db.application.find({
+    skills: 'js'
+}).pretty()
+
+
+db.application.find({
+    'bestFriend.name' : 'stephan'
+})
+
+
+db.application.update({'name' : 'zuz'}, {$set : {'sum' : 9000}})
+
+
+
+
+
+db.application.update({'name' : 'jordan'}, {$set : {'sum' : 4000}}, {multi : true} )
+
+
+
+
+
+db.application.insert({
+    'name' : 'boba',
+    'age' : 30
+})
+
+
+db.application.remove({'gigi' : 'boba'})
+
+
+db.application.update({'name' : 'boba'}, {'name' : 'boba'})
+
+
+
+
+db.application.aggregate([
+    {
+        $match: {
+            $or: [
+                {returned: true},
+                {returned: false}
+            ]
+        }
+    },
+    
+]);
+
+
+
+db.application.aggregate([
+    {
+        $match: {
+            $or: [
+                {returned: true},
+                {returned: false}
+            ]
+        }
+    },
+    {
+        $group: {
+            _id: '$returned',
+            count: {$sum : 1}
+        }
+    }
+]);
+
+
+
+
+
+db.application.aggregate([
+    {
+        $match: {
+            $or: [
+                {returned: true},
+                {returned: false}
+            ]
+        }
+    },
+    {
+        $group: {
+            _id: '$returned',
+            count: {$sum : '$sum'}
+        }
+    }
+]);
+
+
+
+
+
+
+db.application.aggregate([
+    {
+        $match: {
+            $or: [
+                {returned: true},
+                {returned: false}
+            ]
+        }
+    },
+    {
+        $group: {
+            _id: '$returned',
+            count: {$avg : '$sum'}
+        }
+    },
+    {
+        $sort: {
+            count: -1
+        }
+    },
+    {
+        $skip: 1
+    },
+    {
+        $limit: 1
+    }
+]);
+
+
+
+
+<!-- FIRST HOMEWORK -->
+
+Створити базу даних Країн всередині одну колекцію в якій зберігати назву, к-ть населеннь, чи є ядерна зброя і т д
+
+записати всередину декілька документів
+
+знайти
+- всіх з ядерною зброєю
+- де к-ть наслення > 5м
+- 5 найбільших країн по площі
+- 5 найменших країн по населенню
+- всіх де є ядерна зброя або армія  кількістю > 100000
+- всіх де є ядерна зброя і армія  кількістю > 100000
+
+видалити найменшу країну
+
+порахувати к-ть країн з ядерною зброєю і без неї(використовуючи групування)
+
+порахувати населення всіх країн в яких є ядерна зброя(використовуючи групування)
+
+встановити всім країнам армію в 0 чоловік і відібрати ядерну зброю
+
+
+db.countries2.insert({
+    'country': 'Germany',
+    'population' : 60,
+    'nuclear' : false,
+    'area' : 10000,
+    'militaries' : 500000
+    },{
+    'country': 'Ukraine',
+    'population' : 40,
+    'nuclear' : false,
+    'area' : 12000,
+    'militaries' : 200000
+    },{
+    'country': 'USA',
+    'population' : 100,
+    'nuclear' : true,
+    'area' : 50000,
+    'militaries' : 700000
+    },{
+    'country': 'Russia',
+    'population' : 80,
+    'nuclear' : true,
+    'area' : 80000,
+    'militaries' : 300000
+    },{
+    'country': 'France',
+    'population' : 70,
+    'nuclear' : true,
+    'area' : 10000,
+    'militaries' : 200000
+    }
+)
+
+
+
+db.countries.insert({
+    'country': 'France',
+    'population' : 70,
+    'nuclear' : true,
+    'area' : 10000,
+    'militaries' : 200000
+    })
+
+
+знайти
+- всіх з ядерною зброєю
+
+
+db.countries.find({'nuclear' : true}).pretty()
+
+- де к-ть наслення > 5м
+
+db.countries.find({
+    'population' : {
+    $gt : 50
+    }, 'country' : 'USA'
+}).pretty()
+
+- 5 найбільших країн по площі
+
+
+db.countries.find().sort({area : -1}).limit(5).pretty()
+
+- 5 найменших країн по населенню
+
+db.countries.find().sort({population : 1}).limit(5).pretty()
+
+
+- всіх де є ядерна зброя або армія  кількістю > 100000
+
+db.countries.find({
+    $or: [
+        {'nuclear' : true},
+        {'militaries' : {
+            $gt : 100000     
+        }}
+    ]
+}).pretty()
+
+
+
+порахувати к-ть країн з ядерною зброєю і без неї(використовуючи групування)
+
+
+
+db.countries.aggregate([
+{
+    $group : {
+        _id : '$nuclear',
+        amount: {$sum : 1}
+    }
+}
+])
+
+
+
+порахувати населення всіх країн в яких є ядерна зброя(використовуючи групування)
+
+
+db.countries.aggregate([
+{
+    $match: {nuclear : true}
+},
+{
+    $group: {
+        _id : '$nuclear',
+        totalPopulation : {$sum : '$population'}
+    }
+}
+])
+
+
+встановити всім країнам армію в 0 чоловік і відібрати ядерну зброю
+
+db.countries.find().pretty()
+
+db.countries.update({'nuclear' : true}, {'nuclear' : false})
+
+
+db.countries.aggregate([
+{
+    $match: {nuclear: true}
+}
+])
+
+
+db.application.aggregate([
+    {
+        $match: {
+            $or: [
+                {returned: true},
+                {returned: false}
+            ]
+        }
+    },
+    {
+        $group: {
+            _id: '$returned',
+            count: {$avg : '$sum'}
+        }
+    },
+    {
+        $sort: {
+            count: -1
+        }
+    },
+    {
+        $skip: 1
+    },
+    {
+        $limit: 1
+    }
+]);
+
+
+
+</body>
+</html>
+
+
+<script>
+
+
+
+</script>
